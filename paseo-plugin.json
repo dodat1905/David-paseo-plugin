@@ -1,0 +1,8 @@
+{
+  "id": "expand-file-edits",
+  "name": "Expand file edits",
+  "media": [],
+  "requirements": {
+    "paseo": ">=0.11.4"
+  }
+}
