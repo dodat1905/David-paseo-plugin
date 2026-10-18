@@ -1,6 +1,6 @@
 {
-  "id": "expand-file-edits",
-  "name": "Expand file edits",
+  "id": "david-paseo-plugin",
+  "name": "David's Paseo plugin",
   "media": [],
   "requirements": {
     "paseo": ">=0.11.4"
