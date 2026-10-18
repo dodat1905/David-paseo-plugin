@@ -22,7 +22,6 @@ import {
 } from "./format";
 
 const OUTPUT_TAIL_BYTES = 16 * 1024;
-const RECENT_FINISH_MS = 10 * 60 * 1000;
 
 function useNow(intervalMs: number): number {
   const [now, setNow] = useState(() => Date.now());
@@ -161,13 +160,9 @@ export function BackgroundTasksPopover(props: PluginButtonContentProps) {
   );
 }
 
-function pillLabel(tasks: BackgroundTask[], now: number): { label: string; visible: boolean } {
+function pillLabel(tasks: BackgroundTask[]): { label: string; visible: boolean } {
   const running = tasks.filter((task) => task.status === "running").length;
-  if (running > 0) return { label: `${running} running`, visible: true };
-  const recent = tasks.filter((task) => task.endedAt && now - Date.parse(task.endedAt) < RECENT_FINISH_MS);
-  if (recent.length === 0) return { label: "Background", visible: false };
-  const failed = recent.filter((task) => task.status === "failed").length;
-  return { label: failed > 0 ? `${failed} failed` : `${recent.length} done`, visible: true };
+  return { label: running > 0 ? `${running} running` : "Background", visible: running > 0 };
 }
 
 export function contributeBackgroundPills(client: PluginClientContext) {
@@ -218,11 +213,10 @@ export function contributeBackgroundPills(client: PluginClientContext) {
     polling = true;
     try {
       const { agents } = await client.rpc(listBackgroundTasksRpc, { agentIds: [...pills.keys()] });
-      const now = Date.now();
       for (const { agentId, tasks } of agents) {
         const pill = pills.get(agentId);
         if (!pill) continue;
-        const next = pillLabel(tasks, now);
+        const next = pillLabel(tasks);
         if (next.label === pill.label && next.visible === pill.visible) continue;
         pill.label = next.label;
         pill.visible = next.visible;

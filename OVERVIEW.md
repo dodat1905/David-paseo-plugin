@@ -19,7 +19,7 @@ Cmd+click (Ctrl+click on Linux and Windows) on a tool call header opens the file
 
 The Shell row wraps long commands and output, so you do not scroll sideways. An expanded row stops at 420 pixels and scrolls vertically. A command that Claude started in the background shows its live state on the row: running, done, failed or stopped.
 
-A Background pill in the composer of each Claude agent shows how many background commands are running, or how many ended in the last ten minutes. Press it to see the running and finished background commands of the session. Tap a command to see its full text, status, output size and the end of its output.
+A Background pill in the composer of each Claude agent shows how many background commands are running. It shows only while at least one command runs. Press it to see the running and finished background commands of the session. Tap a command to see its full text, status, output size and the end of its output.
 
 The daemon side reads the Claude Code session transcript under `~/.claude/projects` (or `CLAUDE_CONFIG_DIR`) and the task output files that the transcript names. It reads only output files that the agent's own transcript names, and it sends nothing off the machine.
 
