@@ -13,6 +13,7 @@ import { useBackgroundTasks } from "./background-tasks-query";
 import { MONOSPACE_FONT, statusColor, statusLabel, WRAPPING_TEXT } from "./format";
 
 const BODY_MAX_HEIGHT = 420;
+const HOST_SPACING_OFFSET = -6;
 
 type ToolCallTransform =PluginTimelineTransformerContribution<"tool_call">["transform"];
 
@@ -67,13 +68,14 @@ export function ShellCard({ item, theme, agentId }: PluginTimelineItemProps<Shel
         borderColor: theme.colors.border,
         backgroundColor: expanded ? theme.colors.surface1 : "transparent",
         overflow: "hidden" as const,
+        marginVertical: HOST_SPACING_OFFSET,
       },
       header: {
         flexDirection: "row" as const,
         alignItems: "center" as const,
-        gap: 10,
+        gap: 8,
         paddingHorizontal: expanded ? 12 : 0,
-        paddingVertical: 8,
+        paddingVertical: expanded ? 8 : 4,
       },
       label: { color: theme.colors.foreground, fontWeight: "500" as const },
       summary: { color: theme.colors.foregroundMuted, flex: 1, minWidth: 0 },
