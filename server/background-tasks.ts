@@ -1,11 +1,10 @@
-import type { PaseoApi } from "@getpaseo/client";
 import type { PluginHandlerContext } from "@getpaseo/plugin/server";
 import type { RpcInput, RpcOutput } from "@getpaseo/plugin";
 import type { BackgroundTask } from "../shared/background-tasks";
 import { listBackgroundTasksRpc, readBackgroundTaskOutputRpc } from "../shared/background-tasks";
 import { backgroundTasksFromTranscript, findTranscript, readOutputTail } from "./transcript";
 
-async function tasksForAgent(paseo: PaseoApi, agentId: string): Promise<BackgroundTask[]> {
+async function tasksForAgent(paseo: PluginHandlerContext["paseo"], agentId: string): Promise<BackgroundTask[]> {
   const refreshed = await paseo.agents.ref(agentId).refresh();
   const agent = refreshed?.agent;
   if (!agent) throw new Error(`Agent ${agentId} not found`);
