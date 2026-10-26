@@ -3,6 +3,6 @@
   "name": "David's Paseo plugin",
   "media": [],
   "requirements": {
-    "paseo": ">=0.11.4"
+    "paseo": ">=0.12.0"
   }
 }

@@ -5,6 +5,8 @@ A Paseo plugin for Claude Code agents:
 - Edit and Write tool calls open automatically, with Monokai colors, word wrap, line numbers and Cmd+click to open the file.
 - Shell rows wrap and scroll vertically, and show the live state of background commands.
 - A Background pill in the composer lists the running and finished background commands of the session.
+- `/token`, `/login` and `/restart` choose how each Claude agent signs in, with Factopia tokens that refresh.
+- The cursor stays in the message input when you type or click an empty part of the app.
 
 See [OVERVIEW.md](OVERVIEW.md).
 
