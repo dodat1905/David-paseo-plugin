@@ -1,4 +1,9 @@
-import { execCommand, type PluginHandlerContext, type PluginLifecycleEvents } from "@getpaseo/plugin/server";
+import {
+  execCommand,
+  type PluginHandlerContext,
+  type PluginLifecycleEvents,
+  type PluginSessionOpenRequest,
+} from "@getpaseo/plugin/server";
 import { existsSync } from "node:fs";
 import { notice } from "../shared/claude-auth";
 import { defaultFactopiaUrl, findUser, freshToken, listUsers, shortName } from "./factopia";
@@ -17,6 +22,7 @@ const bundledPaseoCli = "/Applications/Paseo.app/Contents/Resources/bin/paseo";
 const loginShell = process.env.SHELL ?? "/bin/zsh";
 const authFailure = /^(Failed to authenticate|OAuth token has expired|API Error: 401)/;
 const retryWindowMs = 10 * 60_000;
+const parentAgentLabel = "paseo.parent-agent-id";
 const lastRetryAt = new Map<string, number>();
 
 function paseoCli() {
@@ -76,6 +82,14 @@ async function currentToken(agentId: string, refresh: boolean) {
     console.error(`claude-auth: Factopia token fetch failed for agent ${agentId}: ${(error as Error).message}`);
     return record.token;
   }
+}
+
+export async function inheritParentToken(request: PluginSessionOpenRequest) {
+  if (request.reason !== "create" || !request.provider.startsWith("claude")) return;
+  const parentId = request.labels[parentAgentLabel];
+  if (!parentId || (await tokenFor(request.agentId))) return;
+  const parent = await tokenFor(parentId);
+  if (parent) await saveToken(request.agentId, parent);
 }
 
 export async function withSavedToken(agentId: string, env: Record<string, string>, refresh: boolean) {

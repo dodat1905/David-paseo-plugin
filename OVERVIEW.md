@@ -44,7 +44,15 @@ A Factopia token refreshes without action from you. When the agent opens, the pl
 
 Factopia refreshes a token that expires in less than 3 hours. A refresh revokes the old token of that account, which can stop a Factopia run that uses it.
 
-Tokens and the Factopia MCP token stay on the daemon machine in `~/.paseo/claude-auth/`, readable only by your user. The plugin shows only the last four characters of a token. A restart interrupts a turn in progress. Subagents that Paseo starts as separate agents do not inherit the token. Set `FACTOPIA_URL` in the daemon environment to use another Factopia server.
+Claude Code removes `CLAUDE_CODE_OAUTH_TOKEN` from the commands it runs, so `claude -p` in an agent's shell uses your CLI login. To give it the agent's token, the plugin also keeps one file per agent in `~/.paseo/claude-auth/agents/`. Add this line to `~/.zshenv`:
+
+```sh
+[[ -n $PASEO_AGENT_ID && -r ${PASEO_HOME:-$HOME/.paseo}/claude-auth/agents/$PASEO_AGENT_ID ]] && export CLAUDE_CODE_OAUTH_TOKEN="$(<${PASEO_HOME:-$HOME/.paseo}/claude-auth/agents/$PASEO_AGENT_ID)"
+```
+
+Every command that the agent runs can then read the token.
+
+Tokens and the Factopia MCP token stay on the daemon machine in `~/.paseo/claude-auth/`, readable only by your user. The plugin shows only the last four characters of a token. A restart interrupts a turn in progress. An agent that another agent creates, for example with the Paseo `create_agent` tool, starts on its parent's token. After that it keeps its own copy, so `/token` on the parent does not change it. Set `FACTOPIA_URL` in the daemon environment to use another Factopia server.
 
 ## Composer focus
 

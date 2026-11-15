@@ -1,6 +1,7 @@
 import type { PluginHandlerContext, PluginServerContext } from "@getpaseo/plugin/server";
 import { loginRpc, restartRpc, tokenRpc } from "../shared/claude-auth";
 import {
+  inheritParentToken,
   login,
   recoverFromAuthFailure,
   refreshIdleFactopiaAgents,
@@ -8,15 +9,18 @@ import {
   runTokenCommand,
   withSavedToken,
 } from "./agent-auth";
+import { syncShellTokens } from "./token-store";
 
 const refreshIntervalMs = 5 * 60_000;
 
 export function contributeClaudeAuth(server: PluginServerContext) {
   let paseo: PluginHandlerContext["paseo"] | null = null;
   let refreshing = false;
+  void syncShellTokens().catch((error) => console.error(`claude-auth: shell token sync failed: ${error.message}`));
 
   server.before("agent.session_open", async ({ request }, context) => {
     paseo = context.paseo;
+    await inheritParentToken(request);
     const env = await withSavedToken(request.agentId, request.env, request.purpose === "interactive");
     return env ? { ...request, env } : undefined;
   });
