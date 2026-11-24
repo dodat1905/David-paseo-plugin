@@ -188,12 +188,18 @@ export async function refreshIdleFactopiaAgents(paseo: PaseoApi) {
   }
 }
 
+async function recentTimeline(agentId: string, paseo: PaseoApi) {
+  const page = await paseo.agents.ref(agentId).timeline.refetch({ direction: "tail", limit: 20 });
+  return page.entries.map((entry) => entry.item);
+}
+
 export async function recoverFromAuthFailure(
-  { agent, outcome, timeline }: PluginLifecycleEvents["agent.turn_ended"],
+  { agent, outcome }: PluginLifecycleEvents["agent.turn_ended"],
   paseo: PaseoApi,
 ) {
   const record = await tokenFor(agent.id);
   if (record?.factopiaUserId === undefined) return;
+  const timeline = await recentTimeline(agent.id, paseo);
   const lastReply = timeline.findLast((item) => item.type === "assistant_message");
   const failed =
     (outcome.kind === "failed" && authFailure.test(outcome.error.message.trim())) ||
